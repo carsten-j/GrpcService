@@ -10,26 +10,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   kind: 'linux'
   location: location
   properties: {
-    workerSize: 'Default'
-    workerSizeId: 0
-    currentWorkerSize: 'Default'
-    currentWorkerSizeId: 0
-    currentNumberOfWorkers: 1
-    webSpace: 'asdfawer-WestEuropewebspace-Linux'
-    planName: 'VirtualDedicatedPlan'
-    computeMode: 'Dedicated'
-    perSiteScaling: false
-    elasticScaleEnabled: false
-    maximumElasticWorkerCount: 1
-    isSpot: false
-    kind: 'linux'
     reserved: true
-    isXenon: false
-    hyperV: false
-    mdmId: 'waws-prod-am2-603_9267'
-    targetWorkerCount: 0
-    targetWorkerSizeId: 0
-    zoneRedundant: false
   }
   sku: {
     name: 'B1'
@@ -75,6 +56,13 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       http20Enabled: true
       functionAppScaleLimit: 0
       minimumElasticInstanceCount: 0
+      appSettings: [
+        {
+          name: 'HTTP20_ONLY_PORT'
+          value: 8585
+        }
+      ]
+      http20ProxyFlag: 1
     }
     sku: 'B1'
     scmSiteAlsoStopped: false
@@ -87,7 +75,6 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     dailyMemoryTimeQuota: 0
     siteDisabledReason: 0
     httpsOnly: true
-    http20ProxyFlag: 1
     redundancyMode: 'None'
     privateEndpointConnections: []
     eligibleLogCategories: 'AppServiceAppLogs,AppServiceAuditLogs,AppServiceConsoleLogs,AppServiceHTTPLogs,AppServiceIPSecAuditLogs,AppServicePlatformLogs,ScanLogs'
