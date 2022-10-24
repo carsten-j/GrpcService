@@ -1,9 +1,10 @@
-param webAppName string = uniqueString(resourceGroup().id) // Generate unique String for web app name
 param location string = resourceGroup().location // Location for all resources
-var appServicePlanName = toLower('AppServicePlan-${webAppName}')
-var webSiteName = toLower('wapp-${webAppName}')
+param webAppName string = uniqueString(resourceGroup().id) // Generate unique String for web app name
 param repositoryUrl string = 'https://github.com/carsten-j/GrpcService'
 param branch string = 'master'
+param sku string = 'B1'
+var appServicePlanName = toLower('AppServicePlan-${webAppName}')
+var webSiteName = toLower('wapp-${webAppName}')
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
@@ -13,7 +14,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
     reserved: true
   }
   sku: {
-    name: 'B1'
+    name: sku
   }
 }
 
@@ -24,62 +25,19 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     enabled: true
-    adminEnabled: true
-    siteProperties: {
-      metadata: null
-      properties: [
-        {
-          name: 'LinuxFxVersion'
-          value: 'DOTNETCORE|6.0'
-        }
-        {
-          name: 'WindowsFxVersion'
-          value: null
-        }
-      ]
-      appSettings: null
-    }
-    reserved: true
-    isXenon: false
-    hyperV: false
-    storageRecoveryDefaultState: 'Running'
-    contentAvailabilityState: 'Normal'
-    runtimeAvailabilityState: 'Normal'
-    vnetRouteAllEnabled: false
-    vnetImagePullEnabled: false
-    vnetContentShareEnabled: false
     siteConfig: {
-      numberOfWorkers: 1
       linuxFxVersion: 'DOTNETCORE|6.0'
-      acrUseManagedIdentityCreds: false
       alwaysOn: false
       http20Enabled: true
-      functionAppScaleLimit: 0
-      minimumElasticInstanceCount: 0
       appSettings: [
         {
           name: 'HTTP20_ONLY_PORT'
-          value: 8585
+          value: '8585'
         }
       ]
       http20ProxyFlag: 1
     }
-    sku: 'B1'
-    scmSiteAlsoStopped: false
-    clientAffinityEnabled: false
-    clientCertEnabled: false
-    clientCertMode: 'Required'
-    hostNamesDisabled: false
-    kind: 'app,linux'
-    containerSize: 0
-    dailyMemoryTimeQuota: 0
-    siteDisabledReason: 0
     httpsOnly: true
-    redundancyMode: 'None'
-    privateEndpointConnections: []
-    eligibleLogCategories: 'AppServiceAppLogs,AppServiceAuditLogs,AppServiceConsoleLogs,AppServiceHTTPLogs,AppServiceIPSecAuditLogs,AppServicePlatformLogs,ScanLogs'
-    storageAccountRequired: false
-    keyVaultReferenceIdentity: 'SystemAssigned'
   }
 }
 
